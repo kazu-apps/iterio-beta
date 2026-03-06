@@ -637,12 +637,21 @@
 <script>
 function toggleLang() {
   document.body.classList.toggle('lang-jp');
-  const jpInlines = document.querySelectorAll('.jp-inline');
-  const enInlines = document.querySelectorAll('.en-inline');
-  const isJp = document.body.classList.contains('lang-jp');
-  jpInlines.forEach(el => el.style.display = isJp ? 'inline' : 'none');
-  enInlines.forEach(el => el.style.display = isJp ? 'none' : 'inline');
+  var jpInlines = document.querySelectorAll('.jp-inline');
+  var enInlines = document.querySelectorAll('.en-inline');
+  var isJp = document.body.classList.contains('lang-jp');
+  jpInlines.forEach(function(el) { el.style.display = isJp ? 'inline' : 'none'; });
+  enInlines.forEach(function(el) { el.style.display = isJp ? 'none' : 'inline'; });
 }
+
+(function() {
+  var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile) {
+    var mailto = 'mailto:iterio.timer.app.help@gmail.com?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20%0A%0ADevice%3A%20';
+    var links = document.querySelectorAll('a.btn-primary');
+    links.forEach(function(a) { a.href = mailto; });
+  }
+})();
 </script>
 
 </body>
