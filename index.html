@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iterio Beta - Focus Timer with Spaced Repetition</title>
+  <meta name="description" content="Join the Iterio beta: a study timer that combines aggressive focus lock with automatic spaced repetition based on the Ebbinghaus forgetting curve.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface-2: #1a1a26;
+      --border: #2a2a3a;
+      --text: #e8e8f0;
+      --text-dim: #8888a0;
+      --accent: #6c5ce7;
+      --accent-light: #a29bfe;
+      --accent-glow: rgba(108, 92, 231, 0.3);
+      --green: #00b894;
+      --orange: #fdcb6e;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    /* Hero */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      padding: 60px 24px;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 14px;
+      color: var(--accent-light);
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, var(--accent-light), var(--accent), #fd79a8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 16px 40px;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 24px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px var(--accent-glow);
+    }
+
+    .btn-primary svg { width: 24px; height: 24px; }
+
+    .cta-note {
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+
+    /* Features */
+    .features { padding: 80px 0; }
+
+    .section-label {
+      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: var(--accent-light);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* Beta Benefits */
+    .benefits {
+      padding: 80px 0;
+    }
+
+    .benefit-list {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+    }
+
+    .benefit-check {
+      width: 28px;
+      height: 28px;
+      background: rgba(0, 184, 148, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .benefit-item h4 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .benefit-item p { font-size: 0.9rem; color: var(--text-dim); }
+
+    /* How it works */
+    .how-it-works { padding: 80px 0; }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      background: var(--surface-2);
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--accent-light);
+      flex-shrink: 0;
+    }
+
+    .step-text h4 { font-weight: 600; margin-bottom: 2px; }
+    .step-text p { font-size: 0.9rem; color: var(--text-dim); }
+
+    .arrow {
+      width: 2px;
+      height: 24px;
+      background: var(--border);
+      margin-left: 23px;
+    }
+
+    /* Final CTA */
+    .final-cta {
+      text-align: center;
+      padding: 80px 24px;
+      background: linear-gradient(180deg, transparent, var(--surface) 40%, var(--surface) 60%, transparent);
+      border-radius: 24px;
+      margin: 40px 0;
+    }
+
+    .final-cta h2 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .final-cta p {
+      color: var(--text-dim);
+      margin-bottom: 32px;
+      font-size: 1.1rem;
+    }
+
+    .counter {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+
+    .counter strong { color: var(--orange); font-size: 1.1rem; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--text-dim);
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a { color: var(--accent-light); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* Japanese toggle */
+    .lang-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      color: var(--text-dim);
+      font-size: 13px;
+      cursor: pointer;
+      z-index: 100;
+      transition: all 0.2s;
+    }
+    .lang-toggle:hover { color: var(--text); border-color: var(--accent); }
+
+    .jp { display: none; }
+    body.lang-jp .en { display: none; }
+    body.lang-jp .jp { display: block; }
+    body.lang-jp .jp-inline { display: inline; }
+    body.lang-jp .en-inline { display: none; }
+
+    @media (max-width: 600px) {
+      .hero { min-height: 80vh; padding: 40px 20px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .btn-primary { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<button class="lang-toggle" onclick="toggleLang()">
+  <span class="en-inline">JP</span>
+  <span class="jp-inline" style="display:none">EN</span>
+</button>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="badge">
+    <span class="dot"></span>
+    <span class="en-inline">Beta Testers Wanted</span>
+    <span class="jp-inline" style="display:none">Beta Testers Wanted</span>
+  </div>
+
+  <h1>
+    <span class="en">Focus Hard.<br>Remember <span class="gradient">Everything.</span></span>
+    <span class="jp">集中して学ぶ。<br><span class="gradient">全てを記憶する。</span></span>
+  </h1>
+
+  <p>
+    <span class="en">Iterio is a study timer that locks your phone during focus sessions and automatically schedules reviews using the Ebbinghaus forgetting curve. Join the beta and get free Premium access.</span>
+    <span class="jp">Iterio はフォーカスセッション中にスマホをロックし、エビングハウスの忘却曲線に基づいて自動で復習スケジュールを作成する学習タイマーです。ベータに参加してプレミアム機能を無料で使おう。</span>
+  </p>
+
+  <div class="cta-group">
+    <a href="https://play.google.com/apps/testing/com.iterio.app" class="btn-primary" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302a1 1 0 0 1 0 1.38l-2.302 2.302L15.396 12l2.302-2.492zM5.864 2.658L16.8 8.99l-2.302 2.302L5.864 2.658z"/></svg>
+      <span class="en-inline">Join Beta on Google Play</span>
+      <span class="jp-inline" style="display:none">Google Play でベータに参加</span>
+    </a>
+    <span class="cta-note">
+      <span class="en-inline">Android 8.0+ &middot; Free Premium during beta</span>
+      <span class="jp-inline" style="display:none">Android 8.0+ &middot; ベータ期間中プレミアム無料</span>
+    </span>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features">
+  <div class="container">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">
+      <span class="en">Built for Serious Learners</span>
+      <span class="jp">本気で学ぶ人のために</span>
+    </h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-icon">&#128274;</span>
+        <h3>
+          <span class="en">3-Level Focus Lock</span>
+          <span class="jp">3段階フォーカスロック</span>
+        </h3>
+        <p>
+          <span class="en">App restriction, phone lock, and complete lockdown. Even blocks Picture-in-Picture attempts. No escape.</span>
+          <span class="jp">アプリ制限、通常ロック、完全ロックダウン。PiPも完全ブロック。逃げ場なし。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">&#129504;</span>
+        <h3>
+          <span class="en">Auto Spaced Repetition</span>
+          <span class="jp">自動復習スケジュール</span>
+        </h3>
+        <p>
+          <span class="en">Reviews scheduled at 1, 3, 7, 14, 30 days based on the Ebbinghaus forgetting curve. You study, Iterio remembers when to review.</span>
+          <span class="jp">エビングハウスの忘却曲線に基づき1,3,7,14,30日後に復習。あなたは学ぶだけ、復習はIterioが管理。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">&#9202;</span>
+        <h3>
+          <span class="en">Custom Pomodoro Timer</span>
+          <span class="jp">カスタムポモドーロ</span>
+        </h3>
+        <p>
+          <span class="en">Customizable work/break cycles with notifications. Paired with focus lock for distraction-free sessions.</span>
+          <span class="jp">作業・休憩サイクルを自由にカスタマイズ。フォーカスロックと連携して集中を維持。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">&#128202;</span>
+        <h3>
+          <span class="en">Detailed Statistics</span>
+          <span class="jp">詳細な統計データ</span>
+        </h3>
+        <p>
+          <span class="en">Daily/weekly/monthly graphs, subject distribution, streaks, and GitHub-style calendar heatmaps.</span>
+          <span class="jp">日次/週次/月次グラフ、教科別分布、ストリーク、GitHubスタイルのヒートマップ。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">&#127925;</span>
+        <h3>
+          <span class="en">Focus BGM Generator</span>
+          <span class="jp">集中BGMジェネレータ</span>
+        </h3>
+        <p>
+          <span class="en">Procedurally generated ambient music designed to enhance concentration. No ads, no playlists to manage.</span>
+          <span class="jp">プロシージャル生成のアンビエントBGM。広告なし、プレイリスト管理も不要。</span>
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">&#128737;</span>
+        <h3>
+          <span class="en">Encrypted Cloud Backup</span>
+          <span class="jp">暗号化クラウドバックアップ</span>
+        </h3>
+        <p>
+          <span class="en">AES-256-GCM encrypted backups to Google Drive. Your study data stays private.</span>
+          <span class="jp">AES-256-GCM暗号化でGoogle Driveにバックアップ。学習データは完全にプライベート。</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Beta Benefits -->
+<section class="benefits">
+  <div class="container">
+    <div class="section-label">Beta Program</div>
+    <h2 class="section-title">
+      <span class="en">What You Get as a Tester</span>
+      <span class="jp">テスターになると</span>
+    </h2>
+
+    <div class="benefit-list">
+      <div class="benefit-item">
+        <div class="benefit-check">&#10003;</div>
+        <div>
+          <h4>
+            <span class="en">Free Premium Access</span>
+            <span class="jp">プレミアム無料開放</span>
+          </h4>
+          <p>
+            <span class="en">Full access to all Premium features for the entire beta period. Unlimited customization, cloud backup, BGM, and more.</span>
+            <span class="jp">ベータ期間中、全プレミアム機能を無料で利用可能。カスタマイズ、クラウドバックアップ、BGM等。</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="benefit-check">&#10003;</div>
+        <div>
+          <h4>
+            <span class="en">Shape the Product</span>
+            <span class="jp">プロダクトを一緒に作る</span>
+          </h4>
+          <p>
+            <span class="en">Your feedback directly influences what gets built next. Talk to the developer who writes every line of code.</span>
+            <span class="jp">あなたのフィードバックが次の開発を左右します。コードを書く開発者と直接やり取り。</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="benefit-item">
+        <div class="benefit-check">&#10003;</div>
+        <div>
+          <h4>
+            <span class="en">Early Access</span>
+            <span class="jp">新機能に先行アクセス</span>
+          </h4>
+          <p>
+            <span class="en">Be the first to try new features before public release.</span>
+            <span class="jp">一般公開前に新機能をいち早く体験。</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How to Join -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-label">How to Join</div>
+    <h2 class="section-title">
+      <span class="en">3 Simple Steps</span>
+      <span class="jp">3ステップで参加</span>
+    </h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <h4>
+            <span class="en">Click "Join Beta" below</span>
+            <span class="jp">下の「ベータに参加」をクリック</span>
+          </h4>
+          <p>
+            <span class="en">Opens the Google Play beta opt-in page</span>
+            <span class="jp">Google Play のベータ参加ページが開きます</span>
+          </p>
+        </div>
+      </div>
+      <div class="arrow"></div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <h4>
+            <span class="en">Accept & install Iterio</span>
+            <span class="jp">承諾してIterioをインストール</span>
+          </h4>
+          <p>
+            <span class="en">Opt in to the testing program, then install the app</span>
+            <span class="jp">テストプログラムに参加後、アプリをインストール</span>
+          </p>
+        </div>
+      </div>
+      <div class="arrow"></div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <h4>
+            <span class="en">Use it & share feedback</span>
+            <span class="jp">使ってフィードバックを送る</span>
+          </h4>
+          <p>
+            <span class="en">Study with Iterio and tell us what works (and what doesn't)</span>
+            <span class="jp">Iterioで学習して、良い点・改善点を教えてください</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+  <div class="container">
+    <h2>
+      <span class="en">Ready to Focus?</span>
+      <span class="jp">集中する準備はできた？</span>
+    </h2>
+    <p>
+      <span class="en">Join the beta now and get free Premium access.</span>
+      <span class="jp">今すぐベータに参加してプレミアムを無料で入手。</span>
+    </p>
+    <a href="https://play.google.com/apps/testing/com.iterio.app" class="btn-primary" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.199l2.302 2.302a1 1 0 0 1 0 1.38l-2.302 2.302L15.396 12l2.302-2.492zM5.864 2.658L16.8 8.99l-2.302 2.302L5.864 2.658z"/></svg>
+      <span class="en-inline">Join Beta on Google Play</span>
+      <span class="jp-inline" style="display:none">Google Play でベータに参加</span>
+    </a>
+    <div class="counter">
+      <span class="en-inline">Looking for</span>
+      <span class="jp-inline" style="display:none">あと</span>
+      <strong>20</strong>
+      <span class="en-inline">beta testers</span>
+      <span class="jp-inline" style="display:none">人のテスター募集中</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      <span class="en">Iterio &middot; Built by a solo developer &middot; <a href="mailto:iterio.timer.app.help@gmail.com">iterio.timer.app.help@gmail.com</a></span>
+      <span class="jp">Iterio &middot; 個人開発 &middot; <a href="mailto:iterio.timer.app.help@gmail.com">iterio.timer.app.help@gmail.com</a></span>
+    </p>
+    <p style="margin-top:8px;">Android 8.0+ &middot; English / Japanese</p>
+  </div>
+</footer>
+
+<script>
+function toggleLang() {
+  document.body.classList.toggle('lang-jp');
+  const jpInlines = document.querySelectorAll('.jp-inline');
+  const enInlines = document.querySelectorAll('.en-inline');
+  const isJp = document.body.classList.contains('lang-jp');
+  jpInlines.forEach(el => el.style.display = isJp ? 'inline' : 'none');
+  enInlines.forEach(el => el.style.display = isJp ? 'none' : 'inline');
+}
+</script>
+
+</body>
+</html>
