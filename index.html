@@ -635,6 +635,26 @@
 </footer>
 
 <script>
+var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+var emailUrls = {
+  en: {
+    gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio+Alpha+Tester+Signup&body=Hi!+I%27d+like+to+join+the+Iterio+alpha+test.%0A%0AMy+Gmail+address+for+Google+Play:+%5Bthis+email+or+write+another%5D',
+    mailto: 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20'
+  },
+  ja: {
+    gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio%20Alpha%20Tester%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B&body=Alpha%E3%83%86%E3%82%B9%E3%82%BF%E3%83%BC%E3%81%AB%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%0A%0AGoogle%20Play%E7%94%A8Gmail%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%3A%20',
+    mailto: 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B&body=Alpha%E3%83%86%E3%82%B9%E3%82%BF%E3%83%BC%E3%81%AB%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%0A%0AGoogle%20Play%E7%94%A8Gmail%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%3A%20'
+  }
+};
+
+function updateCtaLinks() {
+  var isJp = document.body.classList.contains('lang-jp');
+  var lang = isJp ? 'ja' : 'en';
+  var href = isMobile ? emailUrls[lang].mailto : emailUrls[lang].gmail;
+  var links = document.querySelectorAll('a.btn-primary');
+  links.forEach(function(a) { a.href = href; });
+}
+
 function toggleLang() {
   document.body.classList.toggle('lang-jp');
   var jpInlines = document.querySelectorAll('.jp-inline');
@@ -642,16 +662,10 @@ function toggleLang() {
   var isJp = document.body.classList.contains('lang-jp');
   jpInlines.forEach(function(el) { el.style.display = isJp ? 'inline' : 'none'; });
   enInlines.forEach(function(el) { el.style.display = isJp ? 'none' : 'inline'; });
+  updateCtaLinks();
 }
 
-(function() {
-  var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (isMobile) {
-    var mailto = 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20';
-    var links = document.querySelectorAll('a.btn-primary');
-    links.forEach(function(a) { a.href = mailto; });
-  }
-})();
+updateCtaLinks();
 </script>
 
 </body>
