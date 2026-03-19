@@ -5,13 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iterio Alpha - Focus Timer with Spaced Repetition</title>
   <meta name="description" content="Join the Iterio alpha test: a study timer that combines aggressive focus lock with automatic spaced repetition based on the Ebbinghaus forgetting curve.">
+  <link rel="canonical" href="https://kazu-apps.github.io/iterio-beta/">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kazu-apps.github.io/iterio-beta/">
+  <meta property="og:title" content="Iterio Alpha - Focus Timer with Spaced Repetition">
+  <meta property="og:description" content="Study timer with aggressive focus lock + automatic spaced repetition. Join the alpha, get free Premium.">
+  <meta property="og:image" content="https://kazu-apps.github.io/iterio-beta/screenshots/timer.png">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="ja_JP">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Iterio Alpha - Focus Timer with Spaced Repetition">
+  <meta name="twitter:description" content="Study timer with aggressive focus lock + automatic spaced repetition. Join the alpha, get free Premium.">
+  <meta name="twitter:image" content="https://kazu-apps.github.io/iterio-beta/screenshots/timer.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { overflow-x: hidden; }
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+    }
 
     :root {
       --bg: #0a0a0f;
@@ -19,7 +37,7 @@
       --surface-2: #1a1a26;
       --border: #2a2a3a;
       --text: #e8e8f0;
-      --text-dim: #8888a0;
+      --text-dim: #9999b8;
       --accent: #6c5ce7;
       --accent-light: #a29bfe;
       --accent-glow: rgba(108, 92, 231, 0.3);
@@ -32,14 +50,29 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
-      overflow-x: hidden;
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
 
     .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
 
+    /* Language visibility — CSS-only, no inline styles needed */
+    .jp { display: none; }
+    .jp-inline { display: none; }
+    .en-inline { display: inline; }
+    body.lang-jp .en { display: none; }
+    body.lang-jp .jp { display: block; }
+    body.lang-jp .en-inline { display: none; }
+    body.lang-jp .jp-inline { display: inline; }
+
     /* Hero */
     .hero {
       min-height: 90vh;
+      min-height: 90svh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -209,9 +242,7 @@
     }
 
     /* Beta Benefits */
-    .benefits {
-      padding: 80px 0;
-    }
+    .benefits { padding: 80px 0; }
 
     .benefit-list {
       max-width: 600px;
@@ -337,7 +368,7 @@
     footer a { color: var(--accent-light); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
-    /* Language toggle - prominent pill */
+    /* Language toggle */
     .lang-toggle {
       position: fixed;
       top: 20px;
@@ -365,15 +396,6 @@
       box-shadow: 0 4px 20px var(--accent-glow);
     }
     .lang-toggle .globe { font-size: 18px; }
-
-    @media (max-width: 600px) {
-      .lang-toggle {
-        top: 12px;
-        right: 12px;
-        padding: 8px 14px;
-        font-size: 13px;
-      }
-    }
 
     /* Scroll indicator */
     .scroll-hint {
@@ -434,21 +456,10 @@
     }
     .screenshot-item img {
       width: 100%;
+      height: auto;
       border-radius: 16px;
       border: 1px solid var(--border);
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    }
-    .screenshot-placeholder {
-      width: 100%;
-      aspect-ratio: 9/16;
-      background: var(--surface);
-      border: 2px dashed var(--border);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-dim);
-      font-size: 14px;
     }
     .screenshot-label {
       text-align: center;
@@ -456,55 +467,66 @@
       font-size: 13px;
       color: var(--text-dim);
     }
-    .screenshot-scroll-hint {
-      text-align: center;
-      font-size: 13px;
-      color: var(--text-dim);
-      margin-top: 8px;
-      display: none;
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .dot, .scroll-arrow { animation: none; }
+      .scroll-hint { animation: none; opacity: 1; }
+      .btn-primary, .feature-card, .lang-toggle { transition: none; }
     }
 
+    /* Mobile — single consolidated block */
     @media (max-width: 600px) {
+      .hero {
+        min-height: 80vh;
+        min-height: 80svh;
+        padding: 80px 20px 40px;
+      }
+      .feature-grid { grid-template-columns: 1fr; }
+      .btn-primary { width: 100%; justify-content: center; }
+      .screenshots { padding: 40px 0; }
       .screenshot-scroll {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 16px;
         overflow-x: visible;
         padding: 16px 0;
+        scroll-snap-type: none;
       }
       .screenshot-item {
         width: 100%;
       }
-    }
-
-    .jp { display: none; }
-    body.lang-jp .en { display: none; }
-    body.lang-jp .jp { display: block; }
-    body.lang-jp .jp-inline { display: inline; }
-    body.lang-jp .en-inline { display: none; }
-
-    @media (max-width: 600px) {
-      .hero { min-height: 80vh; padding: 80px 20px 40px; }
-      .feature-grid { grid-template-columns: 1fr; }
-      .btn-primary { width: 100%; justify-content: center; }
-      .screenshots { padding: 40px 0; }
+      .screenshot-item:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        max-width: calc(50% - 8px);
+        margin: 0 auto;
+      }
+      .lang-toggle {
+        top: 12px;
+        right: 12px;
+        padding: 10px 14px;
+        font-size: 13px;
+        min-height: 44px;
+      }
     }
   </style>
 </head>
 <body>
 
-<button class="lang-toggle" onclick="toggleLang()">
+<div aria-live="polite" aria-atomic="true" class="sr-only" id="lang-announce"></div>
+
+<button type="button" class="lang-toggle" id="langToggle" aria-label="Switch to Japanese">
   <span class="globe">🌐</span>
   <span class="en-inline">日本語</span>
-  <span class="jp-inline" style="display:none">English</span>
+  <span class="jp-inline">English</span>
 </button>
 
 <!-- Hero -->
-<section class="hero">
+<section class="hero" aria-label="Hero">
   <div class="badge">
     <span class="dot"></span>
     <span class="en-inline">Alpha Testers Wanted</span>
-    <span class="jp-inline" style="display:none">アルファテスター募集中</span>
+    <span class="jp-inline">アルファテスター募集中</span>
   </div>
 
   <h1>
@@ -518,70 +540,70 @@
   </p>
 
   <div class="cta-group">
-    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio+Alpha+Tester+Signup&body=Hi!+I'd+like+to+join+the+Iterio+alpha+test.%0A%0AMy+Gmail+address+for+Google+Play:+%5Bthis+email+or+write+another%5D" class="btn-primary">
+    <a href="mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20" class="btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
       <span class="en-inline">Send Gmail to Join Alpha</span>
-      <span class="jp-inline" style="display:none">Gmail を送ってアルファに参加</span>
+      <span class="jp-inline">Gmail を送ってアルファに参加</span>
     </a>
     <span class="cta-note">
       <span class="en-inline">Android 8.0+ &middot; Free Premium during alpha &middot; We'll send you an invite within 24h</span>
-      <span class="jp-inline" style="display:none">Android 8.0+ &middot; アルファ期間中プレミアム無料 &middot; 24時間以内に招待を送ります</span>
+      <span class="jp-inline">Android 8.0+ &middot; アルファ期間中プレミアム無料 &middot; 24時間以内に招待を送ります</span>
     </span>
   </div>
 
-  <div class="scroll-hint">
+  <div class="scroll-hint" aria-hidden="true">
     <span class="en-inline">Scroll</span>
-    <span class="jp-inline" style="display:none">スクロール</span>
+    <span class="jp-inline">スクロール</span>
     <div class="scroll-arrow"></div>
   </div>
 </section>
 
 <!-- Screenshots -->
-<section class="screenshots">
+<section class="screenshots" aria-labelledby="screenshots-heading">
   <div class="container">
     <div class="section-label">
       <span class="en-inline">Screenshots</span>
-      <span class="jp-inline" style="display:none">スクリーンショット</span>
+      <span class="jp-inline">スクリーンショット</span>
     </div>
-    <h2 class="section-title">
+    <h2 id="screenshots-heading" class="section-title">
       <span class="en">See It in Action</span>
       <span class="jp">アプリの画面を見る</span>
     </h2>
 
     <div class="screenshot-scroll">
       <div class="screenshot-item">
-        <img src="screenshots/timer.png" alt="Focus Timer" loading="lazy">
+        <img src="screenshots/timer.png" alt="Focus Timer screen showing a 25-minute Pomodoro countdown" width="240" height="427">
         <div class="screenshot-label">
           <span class="en-inline">Focus Timer</span>
-          <span class="jp-inline" style="display:none">フォーカスタイマー</span>
+          <span class="jp-inline">フォーカスタイマー</span>
         </div>
       </div>
       <div class="screenshot-item">
-        <img src="screenshots/lock.png" alt="Focus Lock" loading="lazy">
+        <img src="screenshots/lock.png" alt="Focus Lock screen showing full-screen block during a study session" width="240" height="427">
         <div class="screenshot-label">
           <span class="en-inline">Focus Lock</span>
-          <span class="jp-inline" style="display:none">フォーカスロック</span>
+          <span class="jp-inline">フォーカスロック</span>
         </div>
       </div>
       <div class="screenshot-item">
-        <img src="screenshots/review.png" alt="Spaced Repetition" loading="lazy">
+        <img src="screenshots/review.png" alt="Spaced Repetition review list with upcoming review dates" width="240" height="427" loading="lazy">
         <div class="screenshot-label">
           <span class="en-inline">Spaced Repetition</span>
-          <span class="jp-inline" style="display:none">復習スケジュール</span>
+          <span class="jp-inline">復習スケジュール</span>
         </div>
       </div>
       <div class="screenshot-item">
-        <img src="screenshots/stats.png" alt="Statistics" loading="lazy">
+        <img src="screenshots/stats.png" alt="Statistics screen with weekly chart and heatmap calendar" width="240" height="427" loading="lazy">
         <div class="screenshot-label">
           <span class="en-inline">Statistics</span>
-          <span class="jp-inline" style="display:none">統計データ</span>
+          <span class="jp-inline">統計データ</span>
         </div>
       </div>
       <div class="screenshot-item">
-        <img src="screenshots/bgm.png" alt="Focus BGM" loading="lazy">
+        <img src="screenshots/bgm.png" alt="BGM generator screen with ambient sound controls" width="240" height="427" loading="lazy">
         <div class="screenshot-label">
           <span class="en-inline">Focus BGM</span>
-          <span class="jp-inline" style="display:none">集中BGM</span>
+          <span class="jp-inline">集中BGM</span>
         </div>
       </div>
     </div>
@@ -589,10 +611,13 @@
 </section>
 
 <!-- Features -->
-<section class="features">
+<section class="features" aria-labelledby="features-heading">
   <div class="container">
-    <div class="section-label">Features</div>
-    <h2 class="section-title">
+    <div class="section-label">
+      <span class="en-inline">Features</span>
+      <span class="jp-inline">機能</span>
+    </div>
+    <h2 id="features-heading" class="section-title">
       <span class="en">Built for Serious Learners</span>
       <span class="jp">本気で学ぶ人のために</span>
     </h2>
@@ -674,10 +699,13 @@
 </section>
 
 <!-- Beta Benefits -->
-<section class="benefits">
+<section class="benefits" aria-labelledby="benefits-heading">
   <div class="container">
-    <div class="section-label">Alpha Program</div>
-    <h2 class="section-title">
+    <div class="section-label">
+      <span class="en-inline">Alpha Program</span>
+      <span class="jp-inline">アルファプログラム</span>
+    </div>
+    <h2 id="benefits-heading" class="section-title">
       <span class="en">What You Get as a Tester</span>
       <span class="jp">テスターになると</span>
     </h2>
@@ -729,10 +757,13 @@
 </section>
 
 <!-- How to Join -->
-<section class="how-it-works">
+<section class="how-it-works" aria-labelledby="howto-heading">
   <div class="container">
-    <div class="section-label">How to Join</div>
-    <h2 class="section-title">
+    <div class="section-label">
+      <span class="en-inline">How to Join</span>
+      <span class="jp-inline">参加方法</span>
+    </div>
+    <h2 id="howto-heading" class="section-title">
       <span class="en">3 Simple Steps</span>
       <span class="jp">3ステップで参加</span>
     </h2>
@@ -794,17 +825,17 @@
       <span class="en">Join the alpha now and get free Premium access.</span>
       <span class="jp">今すぐアルファに参加してプレミアムを無料で入手。</span>
     </p>
-    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio+Alpha+Tester+Signup&body=Hi!+I'd+like+to+join+the+Iterio+alpha+test.%0A%0AMy+Gmail+address+for+Google+Play:+%5Bthis+email+or+write+another%5D" class="btn-primary">
+    <a href="mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20" class="btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
       <span class="en-inline">Send Gmail to Join Alpha</span>
-      <span class="jp-inline" style="display:none">Gmail を送ってアルファに参加</span>
+      <span class="jp-inline">Gmail を送ってアルファに参加</span>
     </a>
     <div class="counter">
       <span class="en-inline">Looking for</span>
-      <span class="jp-inline" style="display:none">あと</span>
-      <strong>20</strong>
+      <span class="jp-inline">あと</span>
+      <strong id="tester-count">20</strong>
       <span class="en-inline">alpha testers</span>
-      <span class="jp-inline" style="display:none">人のテスター募集中</span>
+      <span class="jp-inline">人のテスター募集中</span>
     </div>
   </div>
 </section>
@@ -820,37 +851,65 @@
 </footer>
 
 <script>
-var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-var emailUrls = {
-  en: {
-    gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio+Alpha+Tester+Signup&body=Hi!+I%27d+like+to+join+the+Iterio+alpha+test.%0A%0AMy+Gmail+address+for+Google+Play:+%5Bthis+email+or+write+another%5D',
-    mailto: 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20'
-  },
-  ja: {
-    gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio%20Alpha%20Tester%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B&body=Alpha%E3%83%86%E3%82%B9%E3%82%BF%E3%83%BC%E3%81%AB%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%0A%0AGoogle%20Play%E7%94%A8Gmail%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%3A%20',
-    mailto: 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B&body=Alpha%E3%83%86%E3%82%B9%E3%82%BF%E3%83%BC%E3%81%AB%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%0A%0AGoogle%20Play%E7%94%A8Gmail%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%3A%20'
+(function() {
+  'use strict';
+
+  const EMAIL_URLS = {
+    en: {
+      gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio+Alpha+Tester+Signup&body=Hi!+I%27d+like+to+join+the+Iterio+alpha+test.%0A%0AMy+Gmail+address+for+Google+Play:+%5Bthis+email+or+write+another%5D',
+      mailto: 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20'
+    },
+    ja: {
+      gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio%20Alpha%20Tester%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B&body=Alpha%E3%83%86%E3%82%B9%E3%82%BF%E3%83%BC%E3%81%AB%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%0A%0AGoogle%20Play%E7%94%A8Gmail%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%3A%20',
+      mailto: 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B&body=Alpha%E3%83%86%E3%82%B9%E3%82%BF%E3%83%BC%E3%81%AB%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%0A%0AGoogle%20Play%E7%94%A8Gmail%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%3A%20'
+    }
+  };
+
+  const isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+  function isJapanese() {
+    return document.body.classList.contains('lang-jp');
   }
-};
 
-function updateCtaLinks() {
-  var isJp = document.body.classList.contains('lang-jp');
-  var lang = isJp ? 'ja' : 'en';
-  var href = isMobile ? emailUrls[lang].mailto : emailUrls[lang].gmail;
-  var links = document.querySelectorAll('a.btn-primary');
-  links.forEach(function(a) { a.href = href; });
-}
+  function updateCtaLinks() {
+    const lang = isJapanese() ? 'ja' : 'en';
+    const href = isMobile ? EMAIL_URLS[lang].mailto : EMAIL_URLS[lang].gmail;
+    document.querySelectorAll('a.btn-primary').forEach(function(a) { a.href = href; });
+  }
 
-function toggleLang() {
-  document.body.classList.toggle('lang-jp');
-  var jpInlines = document.querySelectorAll('.jp-inline');
-  var enInlines = document.querySelectorAll('.en-inline');
-  var isJp = document.body.classList.contains('lang-jp');
-  jpInlines.forEach(function(el) { el.style.display = isJp ? 'inline' : 'none'; });
-  enInlines.forEach(function(el) { el.style.display = isJp ? 'none' : 'inline'; });
+  function toggleLang() {
+    document.body.classList.toggle('lang-jp');
+    const isJp = isJapanese();
+
+    // Update html lang attribute for screen readers / SEO
+    document.documentElement.lang = isJp ? 'ja' : 'en';
+
+    // Update toggle button aria-label
+    document.getElementById('langToggle').setAttribute(
+      'aria-label',
+      isJp ? 'Switch to English' : 'Switch to Japanese'
+    );
+
+    // Announce language change for screen readers
+    document.getElementById('lang-announce').textContent =
+      isJp ? 'ページを日本語に切り替えました' : 'Page switched to English';
+
+    // Save preference
+    localStorage.setItem('iterio-lang', isJp ? 'jp' : 'en');
+
+    updateCtaLinks();
+  }
+
+  // Restore saved language preference
+  if (localStorage.getItem('iterio-lang') === 'jp') {
+    toggleLang();
+  }
+
   updateCtaLinks();
-}
 
-updateCtaLinks();
+  // Bind toggle via addEventListener (no inline onclick)
+  document.getElementById('langToggle').addEventListener('click', toggleLang);
+})();
 </script>
 
 </body>
