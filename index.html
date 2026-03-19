@@ -11,6 +11,8 @@
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html { overflow-x: hidden; }
+
     :root {
       --bg: #0a0a0f;
       --surface: #12121a;
@@ -53,7 +55,7 @@
       top: -200px;
       left: 50%;
       transform: translateX(-50%);
-      width: 600px;
+      width: min(600px, 100vw);
       height: 600px;
       background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
       pointer-events: none;
@@ -335,22 +337,145 @@
     footer a { color: var(--accent-light); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
-    /* Japanese toggle */
+    /* Language toggle - prominent pill */
     .lang-toggle {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px 14px;
-      color: var(--text-dim);
-      font-size: 13px;
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 100px;
+      padding: 10px 20px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
       cursor: pointer;
       z-index: 100;
-      transition: all 0.2s;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 12px var(--accent-glow);
+      backdrop-filter: blur(10px);
     }
-    .lang-toggle:hover { color: var(--text); border-color: var(--accent); }
+    .lang-toggle:hover {
+      color: white;
+      background: var(--accent);
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .lang-toggle .globe { font-size: 18px; }
+
+    @media (max-width: 600px) {
+      .lang-toggle {
+        top: 12px;
+        right: 12px;
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 1;
+      animation: fadeInUp 1s 1.5s both;
+    }
+    .scroll-hint span {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .scroll-arrow {
+      width: 24px;
+      height: 24px;
+      border-right: 2px solid var(--accent-light);
+      border-bottom: 2px solid var(--accent-light);
+      transform: rotate(45deg);
+      animation: scrollBounce 2s infinite;
+      opacity: 0.7;
+    }
+    @keyframes scrollBounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); opacity: 0.7; }
+      50% { transform: rotate(45deg) translateY(8px); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Screenshot section */
+    .screenshots { padding: 80px 0; }
+    .screenshot-scroll {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 20px 0 32px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--surface);
+    }
+    .screenshot-scroll::-webkit-scrollbar { height: 6px; }
+    .screenshot-scroll::-webkit-scrollbar-track { background: var(--surface); border-radius: 3px; }
+    .screenshot-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+    .screenshot-item {
+      flex-shrink: 0;
+      width: 240px;
+      scroll-snap-align: center;
+    }
+    .screenshot-item img {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .screenshot-placeholder {
+      width: 100%;
+      aspect-ratio: 9/16;
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+    .screenshot-label {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .screenshot-scroll-hint {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .screenshot-scroll {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        overflow-x: visible;
+        padding: 16px 0;
+      }
+      .screenshot-item {
+        width: 100%;
+      }
+    }
 
     .jp { display: none; }
     body.lang-jp .en { display: none; }
@@ -359,17 +484,19 @@
     body.lang-jp .en-inline { display: none; }
 
     @media (max-width: 600px) {
-      .hero { min-height: 80vh; padding: 40px 20px; }
+      .hero { min-height: 80vh; padding: 80px 20px 40px; }
       .feature-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
+      .screenshots { padding: 40px 0; }
     }
   </style>
 </head>
 <body>
 
 <button class="lang-toggle" onclick="toggleLang()">
-  <span class="en-inline">JP</span>
-  <span class="jp-inline" style="display:none">EN</span>
+  <span class="globe">🌐</span>
+  <span class="en-inline">日本語</span>
+  <span class="jp-inline" style="display:none">English</span>
 </button>
 
 <!-- Hero -->
@@ -400,6 +527,64 @@
       <span class="en-inline">Android 8.0+ &middot; Free Premium during alpha &middot; We'll send you an invite within 24h</span>
       <span class="jp-inline" style="display:none">Android 8.0+ &middot; アルファ期間中プレミアム無料 &middot; 24時間以内に招待を送ります</span>
     </span>
+  </div>
+
+  <div class="scroll-hint">
+    <span class="en-inline">Scroll</span>
+    <span class="jp-inline" style="display:none">スクロール</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- Screenshots -->
+<section class="screenshots">
+  <div class="container">
+    <div class="section-label">
+      <span class="en-inline">Screenshots</span>
+      <span class="jp-inline" style="display:none">スクリーンショット</span>
+    </div>
+    <h2 class="section-title">
+      <span class="en">See It in Action</span>
+      <span class="jp">アプリの画面を見る</span>
+    </h2>
+
+    <div class="screenshot-scroll">
+      <div class="screenshot-item">
+        <img src="screenshots/timer.png" alt="Focus Timer" loading="lazy">
+        <div class="screenshot-label">
+          <span class="en-inline">Focus Timer</span>
+          <span class="jp-inline" style="display:none">フォーカスタイマー</span>
+        </div>
+      </div>
+      <div class="screenshot-item">
+        <img src="screenshots/lock.png" alt="Focus Lock" loading="lazy">
+        <div class="screenshot-label">
+          <span class="en-inline">Focus Lock</span>
+          <span class="jp-inline" style="display:none">フォーカスロック</span>
+        </div>
+      </div>
+      <div class="screenshot-item">
+        <img src="screenshots/review.png" alt="Spaced Repetition" loading="lazy">
+        <div class="screenshot-label">
+          <span class="en-inline">Spaced Repetition</span>
+          <span class="jp-inline" style="display:none">復習スケジュール</span>
+        </div>
+      </div>
+      <div class="screenshot-item">
+        <img src="screenshots/stats.png" alt="Statistics" loading="lazy">
+        <div class="screenshot-label">
+          <span class="en-inline">Statistics</span>
+          <span class="jp-inline" style="display:none">統計データ</span>
+        </div>
+      </div>
+      <div class="screenshot-item">
+        <img src="screenshots/bgm.png" alt="Focus BGM" loading="lazy">
+        <div class="screenshot-label">
+          <span class="en-inline">Focus BGM</span>
+          <span class="jp-inline" style="display:none">集中BGM</span>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
