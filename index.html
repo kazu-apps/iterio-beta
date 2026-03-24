@@ -3,33 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iterio Alpha - Focus Timer with Spaced Repetition</title>
-  <meta name="description" content="Join the Iterio alpha test: a study timer that combines aggressive focus lock with automatic spaced repetition based on the Ebbinghaus forgetting curve.">
+  <title>Iterio - Android Study Timer with Focus Lock &amp; Spaced Repetition</title>
+  <meta name="description" content="Iterio locks your phone during study sessions and auto-schedules reviews using the Ebbinghaus forgetting curve. Join the Early Access and get free Premium.">
   <link rel="canonical" href="https://kazu-apps.github.io/iterio-beta/">
+  <!-- Favicon (inline SVG) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23121212'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%2300b894' stroke-width='2.5'/%3E%3Cpath d='M16 9v7l5 3' stroke='%2300b894' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kazu-apps.github.io/iterio-beta/">
-  <meta property="og:title" content="Iterio Alpha - Focus Timer with Spaced Repetition">
-  <meta property="og:description" content="Study timer with aggressive focus lock + automatic spaced repetition. Join the alpha, get free Premium.">
+  <meta property="og:title" content="Iterio - Study Timer with Focus Lock &amp; Spaced Repetition">
+  <meta property="og:description" content="Lock your phone. Remember everything. Free Premium for early access testers.">
   <meta property="og:image" content="https://kazu-apps.github.io/iterio-beta/screenshots/timer.png">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="ja_JP">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Iterio Alpha - Focus Timer with Spaced Repetition">
-  <meta name="twitter:description" content="Study timer with aggressive focus lock + automatic spaced repetition. Join the alpha, get free Premium.">
+  <meta name="twitter:title" content="Iterio - Study Timer with Focus Lock &amp; Spaced Repetition">
+  <meta name="twitter:description" content="Lock your phone. Remember everything. Free Premium for early access testers.">
   <meta name="twitter:image" content="https://kazu-apps.github.io/iterio-beta/screenshots/timer.png">
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Iterio",
+    "operatingSystem": "Android 8.0+",
+    "applicationCategory": "EducationalApplication",
+    "description": "Study timer with focus lock and automatic spaced repetition based on the Ebbinghaus forgetting curve.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html, body {
-      overflow-x: hidden;
-      width: 100%;
-      max-width: 100vw;
-    }
+    html, body { overflow-x: hidden; width: 100%; max-width: 100vw; }
 
     :root {
       --bg: #0a0a0f;
@@ -43,6 +52,7 @@
       --accent-glow: rgba(108, 92, 231, 0.3);
       --green: #00b894;
       --orange: #fdcb6e;
+      --gradient: linear-gradient(135deg, var(--accent-light), var(--accent), #fd79a8);
     }
 
     body {
@@ -60,7 +70,7 @@
 
     .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
 
-    /* Language visibility — CSS-only, no inline styles needed */
+    /* Language visibility */
     .jp { display: none; }
     .jp-inline { display: none; }
     .en-inline { display: inline; }
@@ -69,7 +79,7 @@
     body.lang-jp .en-inline { display: none; }
     body.lang-jp .jp-inline { display: inline; }
 
-    /* Hero */
+    /* ===== Hero ===== */
     .hero {
       min-height: 90vh;
       min-height: 90svh;
@@ -79,7 +89,7 @@
       align-items: center;
       text-align: center;
       position: relative;
-      padding: 60px 24px;
+      padding: 80px 24px 60px;
     }
 
     .hero::before {
@@ -111,8 +121,7 @@
     }
 
     .badge .dot {
-      width: 8px;
-      height: 8px;
+      width: 8px; height: 8px;
       background: var(--green);
       border-radius: 50%;
       animation: pulse 2s infinite;
@@ -133,16 +142,16 @@
     }
 
     .hero h1 .gradient {
-      background: linear-gradient(135deg, var(--accent-light), var(--accent), #fd79a8);
+      background: var(--gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .hero p {
-      font-size: 1.2rem;
+    .hero p.subtitle {
+      font-size: 1.15rem;
       color: var(--text-dim);
-      max-width: 560px;
+      max-width: 540px;
       margin-bottom: 40px;
       position: relative;
       z-index: 1;
@@ -170,6 +179,8 @@
       text-decoration: none;
       transition: all 0.3s;
       box-shadow: 0 4px 24px var(--accent-glow);
+      border: none;
+      cursor: pointer;
     }
 
     .btn-primary:hover {
@@ -177,16 +188,44 @@
       box-shadow: 0 8px 32px var(--accent-glow);
     }
 
-    .btn-primary svg { width: 24px; height: 24px; }
+    .btn-primary svg { width: 22px; height: 22px; flex-shrink: 0; }
 
     .cta-note {
       font-size: 14px;
       color: var(--text-dim);
     }
 
-    /* Features */
-    .features { padding: 80px 0; }
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      z-index: 1;
+      animation: fadeInUp 1s 1.5s both;
+    }
+    .scroll-hint span { font-size: 12px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
+    .scroll-arrow {
+      width: 24px; height: 24px;
+      border-right: 2px solid var(--accent-light);
+      border-bottom: 2px solid var(--accent-light);
+      transform: rotate(45deg);
+      animation: scrollBounce 2s infinite;
+      opacity: 0.7;
+    }
+    @keyframes scrollBounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); opacity: 0.7; }
+      50% { transform: rotate(45deg) translateY(8px); opacity: 1; }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
 
+    /* ===== Sections shared ===== */
     .section-label {
       text-transform: uppercase;
       font-size: 13px;
@@ -204,44 +243,141 @@
       margin-bottom: 56px;
     }
 
-    .feature-grid {
+    /* ===== Who Is This For ===== */
+    .persona { padding: 80px 0; }
+
+    .persona-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 20px;
     }
 
-    .feature-card {
+    .persona-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 28px;
-      transition: all 0.3s;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.3s;
     }
 
-    .feature-card:hover {
+    .persona-card:hover {
       border-color: var(--accent);
       transform: translateY(-4px);
     }
 
-    .feature-icon {
-      font-size: 2rem;
+    .persona-emoji {
+      font-size: 2.4rem;
       margin-bottom: 16px;
       display: block;
     }
 
-    .feature-card h3 {
-      font-size: 1.1rem;
+    .persona-card h3 {
+      font-size: 1rem;
       font-weight: 600;
       margin-bottom: 8px;
     }
 
-    .feature-card p {
-      font-size: 0.95rem;
+    .persona-card p {
+      font-size: 0.9rem;
       color: var(--text-dim);
       line-height: 1.5;
     }
 
-    /* Beta Benefits */
+    /* ===== Screenshots ===== */
+    .screenshots { padding: 80px 0; }
+    .screenshot-scroll {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 20px 0;
+    }
+    .screenshot-item { flex-shrink: 0; width: 220px; }
+    .screenshot-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .screenshot-label {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    /* ===== Features (3 pillars) ===== */
+    .features { padding: 80px 0; }
+
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .pillar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 28px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .pillar-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .pillar-icon {
+      width: 56px; height: 56px;
+      background: rgba(108, 92, 231, 0.12);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+
+    .pillar-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .pillar-card p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .pillar-detail {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .pillar-detail li {
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .pillar-detail li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    /* ===== Benefits ===== */
     .benefits { padding: 80px 0; }
 
     .benefit-list {
@@ -263,8 +399,7 @@
     }
 
     .benefit-check {
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       background: rgba(0, 184, 148, 0.15);
       border-radius: 8px;
       display: flex;
@@ -278,7 +413,7 @@
     .benefit-item h4 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
     .benefit-item p { font-size: 0.9rem; color: var(--text-dim); }
 
-    /* How it works */
+    /* ===== How to Join ===== */
     .how-it-works { padding: 80px 0; }
 
     .steps {
@@ -289,15 +424,10 @@
       margin: 0 auto;
     }
 
-    .step {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+    .step { display: flex; align-items: center; gap: 20px; }
 
     .step-num {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       background: var(--surface-2);
       border: 2px solid var(--accent);
       border-radius: 50%;
@@ -314,13 +444,73 @@
     .step-text p { font-size: 0.9rem; color: var(--text-dim); }
 
     .arrow {
-      width: 2px;
-      height: 24px;
+      width: 2px; height: 24px;
       background: var(--border);
       margin-left: 23px;
     }
 
-    /* Final CTA */
+    /* ===== FAQ ===== */
+    .faq { padding: 80px 0; }
+
+    .faq-list {
+      max-width: 650px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 20px 24px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .faq-question:hover { color: var(--accent-light); }
+
+    .faq-chevron {
+      width: 20px; height: 20px;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-answer-inner {
+      padding: 0 24px 20px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .faq-answer-inner a { color: var(--accent-light); text-decoration: none; }
+    .faq-answer-inner a:hover { text-decoration: underline; }
+
+    /* ===== Final CTA ===== */
     .final-cta {
       text-align: center;
       padding: 80px 24px;
@@ -356,7 +546,7 @@
 
     .counter strong { color: var(--orange); font-size: 1.1rem; }
 
-    /* Footer */
+    /* ===== Footer ===== */
     footer {
       text-align: center;
       padding: 40px 24px;
@@ -368,7 +558,7 @@
     footer a { color: var(--accent-light); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
-    /* Language toggle */
+    /* ===== Language toggle ===== */
     .lang-toggle {
       position: fixed;
       top: 20px;
@@ -395,112 +585,67 @@
       transform: scale(1.05);
       box-shadow: 0 4px 20px var(--accent-glow);
     }
-    .lang-toggle .globe { font-size: 18px; }
 
-    /* Scroll indicator */
-    .scroll-hint {
-      position: absolute;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      z-index: 1;
-      animation: fadeInUp 1s 1.5s both;
-    }
-    .scroll-hint span {
-      font-size: 12px;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    .scroll-arrow {
-      width: 24px;
-      height: 24px;
-      border-right: 2px solid var(--accent-light);
-      border-bottom: 2px solid var(--accent-light);
-      transform: rotate(45deg);
-      animation: scrollBounce 2s infinite;
-      opacity: 0.7;
-    }
-    @keyframes scrollBounce {
-      0%, 100% { transform: rotate(45deg) translateY(0); opacity: 0.7; }
-      50% { transform: rotate(45deg) translateY(8px); opacity: 1; }
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    /* ===== Floating CTA (mobile) ===== */
+    .floating-cta {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 12px 20px;
+      background: rgba(10, 10, 15, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      z-index: 99;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
     }
 
-    /* Screenshot section */
-    .screenshots { padding: 80px 0; }
-    .screenshot-scroll {
-      display: flex;
-      gap: 20px;
-      overflow-x: auto;
-      padding: 20px 0 32px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin;
-      scrollbar-color: var(--accent) var(--surface);
+    .floating-cta.visible { transform: translateY(0); }
+
+    /* Fade-in animation (set by JS, safe fallback if JS disabled) */
+    .fade-in-ready {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-    .screenshot-scroll::-webkit-scrollbar { height: 6px; }
-    .screenshot-scroll::-webkit-scrollbar-track { background: var(--surface); border-radius: 3px; }
-    .screenshot-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
-    .screenshot-item {
-      flex-shrink: 0;
-      width: 240px;
-      scroll-snap-align: center;
+    .fade-in-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
-    .screenshot-item img {
+
+    .floating-cta .btn-primary {
       width: 100%;
-      height: auto;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    }
-    .screenshot-label {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 13px;
-      color: var(--text-dim);
+      justify-content: center;
+      padding: 14px 24px;
+      font-size: 1rem;
     }
 
-    /* Reduced motion */
+    /* ===== Reduced motion ===== */
     @media (prefers-reduced-motion: reduce) {
       .dot, .scroll-arrow { animation: none; }
       .scroll-hint { animation: none; opacity: 1; }
-      .btn-primary, .feature-card, .lang-toggle { transition: none; }
+      .btn-primary, .pillar-card, .persona-card, .lang-toggle { transition: none; }
+      .floating-cta { transition: none; }
     }
 
-    /* Mobile — single consolidated block */
+    /* ===== Mobile ===== */
     @media (max-width: 600px) {
       .hero {
         min-height: 80vh;
         min-height: 80svh;
         padding: 80px 20px 40px;
       }
-      .feature-grid { grid-template-columns: 1fr; }
+      .pillar-grid, .persona-grid { grid-template-columns: 1fr; }
       .btn-primary { width: 100%; justify-content: center; }
-      .screenshots { padding: 40px 0; }
       .screenshot-scroll {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        overflow-x: visible;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
         padding: 16px 0;
-        scroll-snap-type: none;
       }
-      .screenshot-item {
-        width: 100%;
-      }
-      .screenshot-item:last-child:nth-child(odd) {
-        grid-column: 1 / -1;
-        max-width: calc(50% - 8px);
-        margin: 0 auto;
-      }
+      .screenshot-item { width: 100%; }
       .lang-toggle {
         top: 12px;
         right: 12px;
@@ -508,46 +653,51 @@
         font-size: 13px;
         min-height: 44px;
       }
+      .floating-cta { display: block; }
+      body { padding-bottom: 80px; }
     }
   </style>
 </head>
 <body>
 
+<a href="#main-content" class="sr-only">Skip to content</a>
 <div aria-live="polite" aria-atomic="true" class="sr-only" id="lang-announce"></div>
 
 <button type="button" class="lang-toggle" id="langToggle" aria-label="Switch to Japanese">
-  <span class="globe">🌐</span>
+  <span aria-hidden="true">&#127760;</span>
   <span class="en-inline">日本語</span>
   <span class="jp-inline">English</span>
 </button>
 
-<!-- Hero -->
+<main id="main-content">
+
+<!-- ===== Hero ===== -->
 <section class="hero" aria-label="Hero">
   <div class="badge">
-    <span class="dot"></span>
-    <span class="en-inline">Alpha Testers Wanted</span>
-    <span class="jp-inline">アルファテスター募集中</span>
+    <span class="dot" aria-hidden="true"></span>
+    <span class="en-inline">Early Access - Testers Wanted</span>
+    <span class="jp-inline">先行アクセス - テスター募集中</span>
   </div>
 
   <h1>
-    <span class="en">Focus Hard.<br>Remember <span class="gradient">Everything.</span></span>
-    <span class="jp">集中して学ぶ。<br><span class="gradient">全てを記憶する。</span></span>
+    <span class="en">Stop Scrolling.<br><span class="gradient">Start Remembering.</span></span>
+    <span class="jp">スマホを置いて、<br><span class="gradient">学んだことを忘れない。</span></span>
   </h1>
 
-  <p>
-    <span class="en">Iterio is a study timer that locks your phone during focus sessions and automatically schedules reviews using the Ebbinghaus forgetting curve. Join the alpha and get free Premium access.</span>
-    <span class="jp">Iterio はフォーカスセッション中にスマホをロックし、エビングハウスの忘却曲線に基づいて自動で復習スケジュールを作成する学習タイマーです。アルファテストに参加してプレミアム機能を無料で使おう。</span>
+  <p class="subtitle">
+    <span class="en">Iterio locks your phone during study sessions and auto-schedules reviews using the Ebbinghaus forgetting curve. Join the Early Access &mdash; Premium is free for testers.</span>
+    <span class="jp">Iterio はフォーカスセッション中にスマホをロックし、エビングハウスの忘却曲線で自動復習スケジュールを作成。先行アクセスに参加すればプレミアム機能が無料。</span>
   </p>
 
   <div class="cta-group">
-    <a href="mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20" class="btn-primary">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-      <span class="en-inline">Send Gmail to Join Alpha</span>
-      <span class="jp-inline">Gmail を送ってアルファに参加</span>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSchBUVfzTjawXNvh2483F57IFsUxMRk3oYkncW5LFWjnj6-2Q/viewform" class="btn-primary" id="heroCta" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+      <span class="en-inline">Sign Up for Early Access</span>
+      <span class="jp-inline">先行アクセスに申し込む</span>
     </a>
     <span class="cta-note">
-      <span class="en-inline">Android 8.0+ &middot; Free Premium during alpha &middot; We'll send you an invite within 24h</span>
-      <span class="jp-inline">Android 8.0+ &middot; アルファ期間中プレミアム無料 &middot; 24時間以内に招待を送ります</span>
+      <span class="en-inline">Android 8.0+ &middot; Free Premium &middot; Takes 30 seconds</span>
+      <span class="jp-inline">Android 8.0+ &middot; プレミアム無料 &middot; 30秒で完了</span>
     </span>
   </div>
 
@@ -558,7 +708,59 @@
   </div>
 </section>
 
-<!-- Screenshots -->
+<!-- ===== Who Is This For ===== -->
+<section class="persona" aria-labelledby="persona-heading">
+  <div class="container">
+    <div class="section-label">
+      <span class="en-inline">Who Is This For</span>
+      <span class="jp-inline">こんな人におすすめ</span>
+    </div>
+    <h2 id="persona-heading" class="section-title">
+      <span class="en">Sound Familiar?</span>
+      <span class="jp">こんな経験ありませんか？</span>
+    </h2>
+
+    <div class="persona-grid">
+      <div class="persona-card">
+        <span class="persona-emoji" aria-hidden="true">&#128241;</span>
+        <h3>
+          <span class="en">Phone Addict During Study</span>
+          <span class="jp">勉強中にスマホが気になる</span>
+        </h3>
+        <p>
+          <span class="en">"I only meant to check one notification..." Sound familiar? Other focus apps are easy to bypass. Iterio isn't.</span>
+          <span class="jp">「通知を1件だけ...」が止まらない。他のアプリは簡単に回避できるけど、Iterio は違う。</span>
+        </p>
+      </div>
+
+      <div class="persona-card">
+        <span class="persona-emoji" aria-hidden="true">&#128218;</span>
+        <h3>
+          <span class="en">Exam &amp; Certification Prep</span>
+          <span class="jp">試験・資格の勉強中</span>
+        </h3>
+        <p>
+          <span class="en">You study for hours but forget it all within a week. Iterio schedules reviews at the scientifically optimal intervals so you don't have to.</span>
+          <span class="jp">何時間も勉強したのに1週間で忘れる。Iterio が科学的に最適なタイミングで復習をスケジュール。</span>
+        </p>
+      </div>
+
+      <div class="persona-card">
+        <span class="persona-emoji" aria-hidden="true">&#127919;</span>
+        <h3>
+          <span class="en">Building a Study Habit</span>
+          <span class="jp">学習習慣をつけたい</span>
+        </h3>
+        <p>
+          <span class="en">You want a consistent routine but lack the discipline. Iterio's focus lock and streaks keep you on track.</span>
+          <span class="jp">毎日の勉強を続けたいけど意志力が足りない。ロックとストリークで習慣化をサポート。</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Screenshots ===== -->
 <section class="screenshots" aria-labelledby="screenshots-heading">
   <div class="container">
     <div class="section-label">
@@ -567,7 +769,7 @@
     </div>
     <h2 id="screenshots-heading" class="section-title">
       <span class="en">See It in Action</span>
-      <span class="jp">アプリの画面を見る</span>
+      <span class="jp">アプリの画面</span>
     </h2>
 
     <div class="screenshot-scroll">
@@ -579,176 +781,168 @@
         </div>
       </div>
       <div class="screenshot-item">
-        <img src="screenshots/lock.png" alt="Focus Lock screen showing full-screen block during a study session" width="240" height="427">
+        <img src="screenshots/lock.png" alt="Focus Lock screen blocking all apps during study session" width="240" height="427" loading="lazy">
         <div class="screenshot-label">
           <span class="en-inline">Focus Lock</span>
           <span class="jp-inline">フォーカスロック</span>
         </div>
       </div>
       <div class="screenshot-item">
-        <img src="screenshots/review.png" alt="Spaced Repetition review list with upcoming review dates" width="240" height="427" loading="lazy">
+        <img src="screenshots/review.png" alt="Spaced Repetition review schedule with upcoming review dates" width="240" height="427" loading="lazy">
         <div class="screenshot-label">
           <span class="en-inline">Spaced Repetition</span>
           <span class="jp-inline">復習スケジュール</span>
         </div>
       </div>
-      <div class="screenshot-item">
-        <img src="screenshots/stats.png" alt="Statistics screen with weekly chart and heatmap calendar" width="240" height="427" loading="lazy">
-        <div class="screenshot-label">
-          <span class="en-inline">Statistics</span>
-          <span class="jp-inline">統計データ</span>
-        </div>
-      </div>
-      <div class="screenshot-item">
-        <img src="screenshots/bgm.png" alt="BGM generator screen with ambient sound controls" width="240" height="427" loading="lazy">
-        <div class="screenshot-label">
-          <span class="en-inline">Focus BGM</span>
-          <span class="jp-inline">集中BGM</span>
-        </div>
-      </div>
     </div>
   </div>
 </section>
 
-<!-- Features -->
+<!-- ===== Core Features (3 Pillars) ===== -->
 <section class="features" aria-labelledby="features-heading">
   <div class="container">
     <div class="section-label">
-      <span class="en-inline">Features</span>
-      <span class="jp-inline">機能</span>
+      <span class="en-inline">Core Features</span>
+      <span class="jp-inline">主な機能</span>
     </div>
     <h2 id="features-heading" class="section-title">
-      <span class="en">Built for Serious Learners</span>
-      <span class="jp">本気で学ぶ人のために</span>
+      <span class="en">Everything You Need to Study Smarter</span>
+      <span class="jp">より賢く学ぶために必要なもの</span>
     </h2>
 
-    <div class="feature-grid">
-      <div class="feature-card">
-        <span class="feature-icon">&#128274;</span>
+    <div class="pillar-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon" aria-hidden="true">&#128274;</div>
         <h3>
           <span class="en">3-Level Focus Lock</span>
           <span class="jp">3段階フォーカスロック</span>
         </h3>
         <p>
-          <span class="en">App restriction, phone lock, and complete lockdown. Even blocks Picture-in-Picture attempts. No escape.</span>
-          <span class="jp">アプリ制限、通常ロック、完全ロックダウン。PiPも完全ブロック。逃げ場なし。</span>
+          <span class="en">Your phone becomes a timer and nothing else. Unlike other apps, Iterio blocks every escape route &mdash; including PiP.</span>
+          <span class="jp">スマホがタイマーだけの端末に。他のアプリと違い、PiPを含む全ての抜け道をブロック。</span>
         </p>
+        <ul class="pillar-detail">
+          <li>
+            <span class="en">App restriction mode</span>
+            <span class="jp">アプリ制限モード</span>
+          </li>
+          <li>
+            <span class="en">Full phone lock mode</span>
+            <span class="jp">端末ロックモード</span>
+          </li>
+          <li>
+            <span class="en">Complete lockdown (blocks PiP)</span>
+            <span class="jp">完全ロックダウン（PiPもブロック）</span>
+          </li>
+        </ul>
       </div>
 
-      <div class="feature-card">
-        <span class="feature-icon">&#129504;</span>
+      <div class="pillar-card">
+        <div class="pillar-icon" aria-hidden="true">&#129504;</div>
         <h3>
           <span class="en">Auto Spaced Repetition</span>
           <span class="jp">自動復習スケジュール</span>
         </h3>
         <p>
-          <span class="en">Reviews scheduled at 1, 3, 7, 14, 30 days based on the Ebbinghaus forgetting curve. You study, Iterio remembers when to review.</span>
-          <span class="jp">エビングハウスの忘却曲線に基づき1,3,7,14,30日後に復習。あなたは学ぶだけ、復習はIterioが管理。</span>
+          <span class="en">Based on the Ebbinghaus forgetting curve. You study, Iterio tells you when to review. No manual scheduling.</span>
+          <span class="jp">エビングハウスの忘却曲線に基づく自動スケジュール。復習タイミングは Iterio が管理。</span>
         </p>
+        <ul class="pillar-detail">
+          <li>
+            <span class="en">Auto-generated at 1, 3, 7, 14, 30 days</span>
+            <span class="jp">1, 3, 7, 14, 30日後に自動生成</span>
+          </li>
+          <li>
+            <span class="en">Per-subject tracking</span>
+            <span class="jp">教科別の管理</span>
+          </li>
+          <li>
+            <span class="en">Calendar view with reminders</span>
+            <span class="jp">カレンダー表示とリマインダー</span>
+          </li>
+        </ul>
       </div>
 
-      <div class="feature-card">
-        <span class="feature-icon">&#9202;</span>
+      <div class="pillar-card">
+        <div class="pillar-icon" aria-hidden="true">&#128202;</div>
         <h3>
-          <span class="en">Custom Pomodoro Timer</span>
-          <span class="jp">カスタムポモドーロ</span>
+          <span class="en">Study Analytics</span>
+          <span class="jp">学習分析</span>
         </h3>
         <p>
-          <span class="en">Customizable work/break cycles with notifications. Paired with focus lock for distraction-free sessions.</span>
-          <span class="jp">作業・休憩サイクルを自由にカスタマイズ。フォーカスロックと連携して集中を維持。</span>
+          <span class="en">Track your progress with detailed stats, streaks, and a GitHub-style heatmap. See exactly how far you've come.</span>
+          <span class="jp">詳細な統計、ストリーク、GitHubスタイルのヒートマップで進捗を可視化。</span>
         </p>
-      </div>
-
-      <div class="feature-card">
-        <span class="feature-icon">&#128202;</span>
-        <h3>
-          <span class="en">Detailed Statistics</span>
-          <span class="jp">詳細な統計データ</span>
-        </h3>
-        <p>
-          <span class="en">Daily/weekly/monthly graphs, subject distribution, streaks, and GitHub-style calendar heatmaps.</span>
-          <span class="jp">日次/週次/月次グラフ、教科別分布、ストリーク、GitHubスタイルのヒートマップ。</span>
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <span class="feature-icon">&#127925;</span>
-        <h3>
-          <span class="en">Focus BGM Generator</span>
-          <span class="jp">集中BGMジェネレータ</span>
-        </h3>
-        <p>
-          <span class="en">Procedurally generated ambient music designed to enhance concentration. No ads, no playlists to manage.</span>
-          <span class="jp">プロシージャル生成のアンビエントBGM。広告なし、プレイリスト管理も不要。</span>
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <span class="feature-icon">&#128737;</span>
-        <h3>
-          <span class="en">Encrypted Cloud Backup</span>
-          <span class="jp">暗号化クラウドバックアップ</span>
-        </h3>
-        <p>
-          <span class="en">AES-256-GCM encrypted backups to Google Drive. Your study data stays private.</span>
-          <span class="jp">AES-256-GCM暗号化でGoogle Driveにバックアップ。学習データは完全にプライベート。</span>
-        </p>
+        <ul class="pillar-detail">
+          <li>
+            <span class="en">Daily / weekly / monthly charts</span>
+            <span class="jp">日次・週次・月次グラフ</span>
+          </li>
+          <li>
+            <span class="en">Subject distribution breakdown</span>
+            <span class="jp">教科別の内訳</span>
+          </li>
+          <li>
+            <span class="en">Streak tracking + heatmap calendar</span>
+            <span class="jp">ストリーク + ヒートマップカレンダー</span>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Beta Benefits -->
+<!-- ===== Early Access Benefits ===== -->
 <section class="benefits" aria-labelledby="benefits-heading">
   <div class="container">
     <div class="section-label">
-      <span class="en-inline">Alpha Program</span>
-      <span class="jp-inline">アルファプログラム</span>
+      <span class="en-inline">Early Access Program</span>
+      <span class="jp-inline">先行アクセスプログラム</span>
     </div>
     <h2 id="benefits-heading" class="section-title">
-      <span class="en">What You Get as a Tester</span>
-      <span class="jp">テスターになると</span>
+      <span class="en">What Testers Get</span>
+      <span class="jp">テスターの特典</span>
     </h2>
 
     <div class="benefit-list">
       <div class="benefit-item">
-        <div class="benefit-check">&#10003;</div>
+        <div class="benefit-check" aria-hidden="true">&#10003;</div>
         <div>
           <h4>
-            <span class="en">Free Premium Access</span>
-            <span class="jp">プレミアム無料開放</span>
+            <span class="en">Free Premium &mdash; All Features Unlocked</span>
+            <span class="jp">プレミアム無料 &mdash; 全機能を解放</span>
           </h4>
           <p>
-            <span class="en">Full access to all Premium features for the entire alpha period. Unlimited customization, cloud backup, BGM, and more.</span>
-            <span class="jp">アルファ期間中、全プレミアム機能を無料で利用可能。カスタマイズ、クラウドバックアップ、BGM等。</span>
+            <span class="en">Cloud backup, focus BGM, unlimited customization, and more. Everything is free during the Early Access period.</span>
+            <span class="jp">クラウドバックアップ、集中BGM、無制限カスタマイズ等。先行アクセス期間中は全て無料。</span>
           </p>
         </div>
       </div>
 
       <div class="benefit-item">
-        <div class="benefit-check">&#10003;</div>
+        <div class="benefit-check" aria-hidden="true">&#10003;</div>
         <div>
           <h4>
-            <span class="en">Shape the Product</span>
-            <span class="jp">プロダクトを一緒に作る</span>
+            <span class="en">Your Feedback Shapes the Roadmap</span>
+            <span class="jp">あなたのフィードバックが開発を左右</span>
           </h4>
           <p>
-            <span class="en">Your feedback directly influences what gets built next. Talk to the developer who writes every line of code.</span>
-            <span class="jp">あなたのフィードバックが次の開発を左右します。コードを書く開発者と直接やり取り。</span>
+            <span class="en">Talk directly to the solo developer who writes every line of code. Your ideas become features.</span>
+            <span class="jp">全コードを書く個人開発者と直接やり取り。あなたのアイデアが機能になる。</span>
           </p>
         </div>
       </div>
 
       <div class="benefit-item">
-        <div class="benefit-check">&#10003;</div>
+        <div class="benefit-check" aria-hidden="true">&#10003;</div>
         <div>
           <h4>
-            <span class="en">Early Access</span>
-            <span class="jp">新機能に先行アクセス</span>
+            <span class="en">First to Try New Features</span>
+            <span class="jp">新機能に最速でアクセス</span>
           </h4>
           <p>
-            <span class="en">Be the first to try new features before public release.</span>
-            <span class="jp">一般公開前に新機能をいち早く体験。</span>
+            <span class="en">Be the first to test new features before anyone else. Actively updated with new releases.</span>
+            <span class="jp">一般公開前に新機能をいち早く体験。頻繁にアップデートを配信中。</span>
           </p>
         </div>
       </div>
@@ -756,7 +950,7 @@
   </div>
 </section>
 
-<!-- How to Join -->
+<!-- ===== How to Join ===== -->
 <section class="how-it-works" aria-labelledby="howto-heading">
   <div class="container">
     <div class="section-label">
@@ -764,7 +958,7 @@
       <span class="jp-inline">参加方法</span>
     </div>
     <h2 id="howto-heading" class="section-title">
-      <span class="en">3 Simple Steps</span>
+      <span class="en">3 Easy Steps</span>
       <span class="jp">3ステップで参加</span>
     </h2>
 
@@ -773,16 +967,16 @@
         <div class="step-num">1</div>
         <div class="step-text">
           <h4>
-            <span class="en">Send us your Gmail address</span>
-            <span class="jp">Gmail アドレスを送る</span>
+            <span class="en">Fill out a short form</span>
+            <span class="jp">フォームに記入（30秒）</span>
           </h4>
           <p>
-            <span class="en">Click the button above to email your Gmail address (used for Google Play)</span>
-            <span class="jp">上のボタンをクリックして Gmail アドレスをメール送信</span>
+            <span class="en">Just your Gmail address and what you're studying. That's it.</span>
+            <span class="jp">Gmailアドレスと何を勉強しているかだけ。</span>
           </p>
         </div>
       </div>
-      <div class="arrow"></div>
+      <div class="arrow" aria-hidden="true"></div>
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-text">
@@ -791,22 +985,22 @@
             <span class="jp">招待を受け取る（24時間以内）</span>
           </h4>
           <p>
-            <span class="en">We'll add you to the alpha test and send an install link</span>
-            <span class="jp">アルファテストに追加後、インストールリンクを送ります</span>
+            <span class="en">We'll add you to the test and send a Google Play install link.</span>
+            <span class="jp">テストに追加後、Google Play のインストールリンクを送ります。</span>
           </p>
         </div>
       </div>
-      <div class="arrow"></div>
+      <div class="arrow" aria-hidden="true"></div>
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-text">
           <h4>
-            <span class="en">Install, use & share feedback</span>
-            <span class="jp">インストールして使ってフィードバック</span>
+            <span class="en">Install &amp; start studying</span>
+            <span class="jp">インストールして勉強開始</span>
           </h4>
           <p>
-            <span class="en">Study with Iterio and tell us what works (and what doesn't)</span>
-            <span class="jp">Iterioで学習して、良い点・改善点を教えてください</span>
+            <span class="en">Try it out and share your honest feedback with us.</span>
+            <span class="jp">実際に使って、率直なフィードバックを教えてください。</span>
           </p>
         </div>
       </div>
@@ -814,7 +1008,103 @@
   </div>
 </section>
 
-<!-- Final CTA -->
+<!-- ===== FAQ ===== -->
+<section class="faq" aria-labelledby="faq-heading">
+  <div class="container">
+    <div class="section-label">
+      <span class="en-inline">FAQ</span>
+      <span class="jp-inline">よくある質問</span>
+    </div>
+    <h2 id="faq-heading" class="section-title">
+      <span class="en">Common Questions</span>
+      <span class="jp">よくある質問</span>
+    </h2>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a1">
+          <span>
+            <span class="en-inline">Is it really free?</span>
+            <span class="jp-inline">本当に無料ですか？</span>
+          </span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a1" role="region">
+          <div class="faq-answer-inner">
+            <span class="en">Yes. All Premium features are completely free during the Early Access period. Test purchases through Google Play are never charged.</span>
+            <span class="jp">はい。先行アクセス期間中は全プレミアム機能が完全無料です。Google Play 経由のテスト購入も課金されません。</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a2">
+          <span>
+            <span class="en-inline">What data do you collect?</span>
+            <span class="jp-inline">どんなデータを収集していますか？</span>
+          </span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a2" role="region">
+          <div class="faq-answer-inner">
+            <span class="en">All your study data stays on your device. There are no external servers and no tracking. Cloud backups are opt-in and encrypted with AES-256-GCM. <a href="https://kazu-apps.github.io/iterio-beta/privacy-policy.html">Privacy Policy</a></span>
+            <span class="jp">学習データは全てデバイス内に保存。外部サーバーもトラッキングもありません。クラウドバックアップは任意でAES-256-GCM暗号化済み。<a href="https://kazu-apps.github.io/iterio-beta/privacy-policy.html">プライバシーポリシー</a></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a3">
+          <span>
+            <span class="en-inline">Why does it need Accessibility permissions?</span>
+            <span class="jp-inline">なぜアクセシビリティ権限が必要？</span>
+          </span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a3" role="region">
+          <div class="faq-answer-inner">
+            <span class="en">The Focus Lock feature needs Accessibility Service to detect and block app switches during study sessions. It does not read your screen content or collect any personal information.</span>
+            <span class="jp">フォーカスロック機能は、勉強中のアプリ切り替えを検知・ブロックするためにアクセシビリティサービスが必要です。画面の内容を読み取ったり、個人情報を収集することはありません。</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a4">
+          <span>
+            <span class="en-inline">Why do you ask for my Gmail?</span>
+            <span class="jp-inline">なぜGmailアドレスが必要？</span>
+          </span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a4" role="region">
+          <div class="faq-answer-inner">
+            <span class="en">Google Play requires a Gmail address to add you as a tester. This is the same address linked to your Android phone's Google Play account. We only use it for the test invitation.</span>
+            <span class="jp">Google Play のテスターに追加するために Gmail アドレスが必要です。Android 端末の Google Play アカウントと同じアドレスを使ってください。テスト招待以外には使用しません。</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" aria-expanded="false" aria-controls="faq-a5">
+          <span>
+            <span class="en-inline">Can I leave the test anytime?</span>
+            <span class="jp-inline">テストはいつでもやめられますか？</span>
+          </span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-answer" id="faq-a5" role="region">
+          <div class="faq-answer-inner">
+            <span class="en">Yes, absolutely. You can uninstall the app or leave the testing program at any time through Google Play. No commitment required.</span>
+            <span class="jp">はい、もちろんです。Google Play からいつでもテストプログラムを離脱、またはアプリをアンインストールできます。義務はありません。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Final CTA ===== -->
 <section class="final-cta">
   <div class="container">
     <h2>
@@ -822,23 +1112,25 @@
       <span class="jp">集中する準備はできた？</span>
     </h2>
     <p>
-      <span class="en">Join the alpha now and get free Premium access.</span>
-      <span class="jp">今すぐアルファに参加してプレミアムを無料で入手。</span>
+      <span class="en">Join the Early Access now. Free Premium. 30-second signup.</span>
+      <span class="jp">今すぐ先行アクセスに参加。プレミアム無料。30秒で完了。</span>
     </p>
-    <a href="mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20" class="btn-primary">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-      <span class="en-inline">Send Gmail to Join Alpha</span>
-      <span class="jp-inline">Gmail を送ってアルファに参加</span>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSchBUVfzTjawXNvh2483F57IFsUxMRk3oYkncW5LFWjnj6-2Q/viewform" class="btn-primary" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+      <span class="en-inline">Sign Up for Early Access</span>
+      <span class="jp-inline">先行アクセスに申し込む</span>
     </a>
     <div class="counter">
-      <span class="en-inline">Looking for</span>
-      <span class="jp-inline">あと</span>
-      <strong id="tester-count">20</strong>
-      <span class="en-inline">alpha testers</span>
-      <span class="jp-inline">人のテスター募集中</span>
+      <span class="en-inline">Looking for up to</span>
+      <span class="jp-inline">最大</span>
+      <strong>20</strong>
+      <span class="en-inline">testers</span>
+      <span class="jp-inline">人のテスターを募集中</span>
     </div>
   </div>
 </section>
+
+</main>
 
 <footer>
   <div class="container">
@@ -846,69 +1138,112 @@
       <span class="en">Iterio &middot; Built by a solo developer &middot; <a href="mailto:support-iterio@ks-apps.org">support-iterio@ks-apps.org</a></span>
       <span class="jp">Iterio &middot; 個人開発 &middot; <a href="mailto:support-iterio@ks-apps.org">support-iterio@ks-apps.org</a></span>
     </p>
-    <p style="margin-top:8px;">Android 8.0+ &middot; English / Japanese</p>
+    <p style="margin-top:8px;">
+      <span class="en">Android 8.0+ &middot; <a href="https://kazu-apps.github.io/iterio-beta/privacy-policy.html">Privacy Policy</a></span>
+      <span class="jp">Android 8.0+ &middot; <a href="https://kazu-apps.github.io/iterio-beta/privacy-policy.html">プライバシーポリシー</a></span>
+    </p>
   </div>
 </footer>
+
+<!-- Floating CTA (mobile only) -->
+<div class="floating-cta" id="floatingCta" aria-hidden="true">
+  <a href="https://docs.google.com/forms/d/e/1FAIpQLSchBUVfzTjawXNvh2483F57IFsUxMRk3oYkncW5LFWjnj6-2Q/viewform" class="btn-primary" target="_blank" rel="noopener">
+    <span class="en-inline">Sign Up for Early Access</span>
+    <span class="jp-inline">先行アクセスに申し込む</span>
+  </a>
+</div>
 
 <script>
 (function() {
   'use strict';
 
-  const EMAIL_URLS = {
-    en: {
-      gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio+Alpha+Tester+Signup&body=Hi!+I%27d+like+to+join+the+Iterio+alpha+test.%0A%0AMy+Gmail+address+for+Google+Play:+%5Bthis+email+or+write+another%5D',
-      mailto: 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%20Signup&body=Hi!%20I%27d%20like%20to%20join%20the%20Iterio%20alpha%20test.%0A%0AMy%20Gmail%20address%20for%20Google%20Play%3A%20'
-    },
-    ja: {
-      gmail: 'https://mail.google.com/mail/?view=cm&fs=1&to=support-iterio@ks-apps.org&su=Iterio%20Alpha%20Tester%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B&body=Alpha%E3%83%86%E3%82%B9%E3%82%BF%E3%83%BC%E3%81%AB%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%0A%0AGoogle%20Play%E7%94%A8Gmail%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%3A%20',
-      mailto: 'mailto:support-iterio@ks-apps.org?subject=Iterio%20Alpha%20Tester%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B&body=Alpha%E3%83%86%E3%82%B9%E3%82%BF%E3%83%BC%E3%81%AB%E5%8F%82%E5%8A%A0%E5%B8%8C%E6%9C%9B%E3%81%97%E3%81%BE%E3%81%99%E3%80%82%0A%0AGoogle%20Play%E7%94%A8Gmail%E3%82%A2%E3%83%89%E3%83%AC%E3%82%B9%3A%20'
-    }
-  };
-
-  const isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-
+  // ===== Language Toggle =====
   function isJapanese() {
     return document.body.classList.contains('lang-jp');
   }
 
-  function updateCtaLinks() {
-    const lang = isJapanese() ? 'ja' : 'en';
-    const href = isMobile ? EMAIL_URLS[lang].mailto : EMAIL_URLS[lang].gmail;
-    document.querySelectorAll('a.btn-primary').forEach(function(a) { a.href = href; });
-  }
-
   function toggleLang() {
     document.body.classList.toggle('lang-jp');
-    const isJp = isJapanese();
-
-    // Update html lang attribute for screen readers / SEO
+    var isJp = isJapanese();
     document.documentElement.lang = isJp ? 'ja' : 'en';
-
-    // Update toggle button aria-label
     document.getElementById('langToggle').setAttribute(
       'aria-label',
       isJp ? 'Switch to English' : 'Switch to Japanese'
     );
-
-    // Announce language change for screen readers
     document.getElementById('lang-announce').textContent =
       isJp ? 'ページを日本語に切り替えました' : 'Page switched to English';
-
-    // Save preference
     localStorage.setItem('iterio-lang', isJp ? 'jp' : 'en');
-
-    updateCtaLinks();
   }
 
-  // Restore saved language preference
   if (localStorage.getItem('iterio-lang') === 'jp') {
     toggleLang();
   }
 
-  updateCtaLinks();
-
-  // Bind toggle via addEventListener (no inline onclick)
   document.getElementById('langToggle').addEventListener('click', toggleLang);
+
+  // ===== FAQ Accordion =====
+  document.querySelectorAll('.faq-question').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var item = btn.closest('.faq-item');
+      var answer = item.querySelector('.faq-answer');
+      var isOpen = item.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.faq-item.open').forEach(function(openItem) {
+        openItem.classList.remove('open');
+        openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+        openItem.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+
+      // Toggle current
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // ===== Floating CTA (mobile) =====
+  var floatingCta = document.getElementById('floatingCta');
+  var heroCta = document.getElementById('heroCta');
+
+  if (floatingCta && heroCta) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          floatingCta.classList.remove('visible');
+          floatingCta.setAttribute('aria-hidden', 'true');
+        } else {
+          floatingCta.classList.add('visible');
+          floatingCta.setAttribute('aria-hidden', 'false');
+        }
+      });
+    }, { threshold: 0 });
+
+    observer.observe(heroCta);
+  }
+
+  // ===== Scroll-triggered fade-in (CSS class based) =====
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var fadeEls = document.querySelectorAll('.persona-card, .pillar-card, .benefit-item, .step, .faq-item');
+
+    fadeEls.forEach(function(el) {
+      el.classList.add('fade-in-ready');
+    });
+
+    var fadeObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in-visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    fadeEls.forEach(function(el) {
+      fadeObserver.observe(el);
+    });
+  }
 })();
 </script>
 
